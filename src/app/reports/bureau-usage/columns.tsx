@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 // Helper component for column header with sorting
 const DataTableColumnHeader = <TData, TValue>({
@@ -38,7 +39,7 @@ const DataTableColumnHeader = <TData, TValue>({
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center space-x-2 group", className)}>
       <Button
         variant="ghost"
         size="sm"
@@ -62,15 +63,10 @@ const DataTableColumnHeader = <TData, TValue>({
 // Helper component for column filter (text input)
 const TextColumnFilter = ({
   column,
-  table,
 }: {
   column: Column<any, any>;
-  table: Table<any>;
+  table: Table<any>; // table prop is not used, but kept for consistency with SelectColumnFilter
 }) => {
-  const firstValue = table
-    .getPreFilteredRowModel()
-    .flatRows[0]?.getValue(column.id);
-
   const columnFilterValue = column.getFilterValue();
 
   return (
@@ -87,11 +83,10 @@ const TextColumnFilter = ({
 // Helper component for column filter (select dropdown)
 const SelectColumnFilter = ({
   column,
-  table,
   options,
 }: {
   column: Column<any, any>;
-  table: Table<any>;
+  table: Table<any>; // table prop is not used but often part of filter component signature
   options: string[];
 }) => {
   const columnFilterValue = column.getFilterValue() as string | undefined;
@@ -163,7 +158,7 @@ export const columns = (uniqueUserIds: string[]): ColumnDef<BureauUsageReportRec
       const title = row.getValue("Title") as string;
       const filterValue = table.getColumn("Title")?.getFilterValue() as string;
       if (filterValue && title) {
-        const parts = title.split(new RegExp(`(${filterValue})`, "gi"));
+        const parts = title.split(new RegExp(`(${filterValue.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, "gi"));
         return (
           <div className="min-w-[150px]">
             {parts.map((part, i) =>
