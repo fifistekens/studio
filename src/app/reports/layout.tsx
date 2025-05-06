@@ -46,5 +46,6 @@ export default function ReportsLayout({ children }: PropsWithChildren) {
       </Sidebar>
       <SidebarInset>{children}</SidebarInset>
     </>
+    
   );
 }
