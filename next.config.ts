@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["localhost:9002"], // Add your domain here if deploying
+    }
+  }
 };
 
 export default nextConfig;
